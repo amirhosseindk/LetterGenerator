@@ -1,12 +1,15 @@
-﻿namespace LetterGenerator.Letter.Contracts
+﻿using LetterGenerator.Letter.Models;
+
+namespace LetterGenerator.Letter.Contracts
 {
     public interface ILetterService
     {
-        Task<Models.Letter> GetByIdAsync(Guid id);
-        Task<Models.Letter> GetByNumberAsync(string number);
-        Task<IEnumerable<Models.Letter>> GetAllAsync();
-        Task<int> CreateAsync(Models.Letter letter);
-        Task<bool> UpdateAsync(Models.Letter letter);
+        Task<LetterDto> GetByIdAsync(Guid id);
+        Task<LetterDto> GetByNumberAsync(string number);
+        Task<IEnumerable<LetterDto>> GetAllAsync();
+        Task<int> CreateAsync(CreateLetterDto dto);
+        Task<bool> UpdateAsync(UpdateLetterDto dto);
+        Task<bool> SoftDeleteAsync(Guid id, string username);
         Task<bool> DeleteAsync(Guid id);
     }
 }

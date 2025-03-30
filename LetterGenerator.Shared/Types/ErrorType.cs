@@ -21,6 +21,20 @@
         ClaimAssignmentFailed = 2101,
         PasswordChangeFailed = 2102,
         EmailChangeFailed = 2103,
-        UnauthorizedAccess = 2104
+        UnauthorizedAccess = 2104,
+
+        // Letter Errors
+        LetterRepoNotFound = 3000,
+        LetterRepoCreationFailed = 3001,
+        LetterRepoUpdateFailed = 3002,
+        LetterRepoGetAllFailed = 3003,
+        LetterRepoDeleteFailed = 3004,
+        LetterServNotFound = 3100,
+        LetterServCreationFailed = 3101,
+        LetterServUpdateFailed = 3102,
+        LetterServGetAllFailed = 3103,
+        LetterServDeleteFailed = 3104,
+        LetterServSoftDeleteFailed = 3105,
+        LetterServMapToLetterDtoFailed = 3106
     }
 }

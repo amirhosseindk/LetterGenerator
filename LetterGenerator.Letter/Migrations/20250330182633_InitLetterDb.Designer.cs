@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetterGenerator.Letter.Migrations
 {
     [DbContext(typeof(LetterDbContext))]
-    [Migration("20250326094231_InitLetterDb")]
+    [Migration("20250330182633_InitLetterDb")]
     partial class InitLetterDb
     {
         /// <inheritdoc />
@@ -31,34 +31,37 @@ namespace LetterGenerator.Letter.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Copy")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("CreatedPersian")
-                        .IsRequired()
+                    b.Property<DateTime>("DateTimeLocal")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("CreatedUtc")
+                    b.Property<string>("DeletedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DatePersian")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateUtc")
+                    b.Property<DateTime?>("DeletedDateTimeUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("HaveCopy")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("InsertDateTimeUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("ModifiedPersian")
-                        .IsRequired()
+                    b.Property<string>("ModifiedBy")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("ModifiedUtc")
+                    b.Property<DateTime?>("ModifiedDateTimeUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Number")
@@ -66,19 +69,15 @@ namespace LetterGenerator.Letter.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RecipientName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RecipientPosition")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SenderName")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SenderPosition")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

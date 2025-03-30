@@ -8,6 +8,6 @@ namespace LetterGenerator.User.Models
         public string FullName { get; set; } = string.Empty;
         public bool IsEnable { get; set; } = true;
         public DateTime RegisteredUtc { get; set; } = DateTime.UtcNow;
-        public string RegisteredPersian { get; set; } = DateTime.UtcNow.ToPersian();
+        public DateTime RegisteredPersian { get; set; } = DateTime.Now;
     }
 }

@@ -1,17 +1,15 @@
-﻿using LetterGenerator.Shared.Extentions;
-
-namespace LetterGenerator.Shared.Models
+﻿namespace LetterGenerator.Shared.Models
 {
     public abstract class BaseEntity
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-
-        public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
-        public string CreatedPersian { get; set; } = DateTime.UtcNow.ToPersian();
-
-        public DateTime? ModifiedUtc { get; set; }
-        public string ModifiedPersian { get; set; } = string.Empty;
-
+        public DateTime InsertDateTimeUtc { get; set; } = DateTime.UtcNow;
+        public DateTime? ModifiedDateTimeUtc { get; set; }
+        public DateTime? DeletedDateTimeUtc { get; set; }
         public bool IsDeleted { get; set; } = false;
+        public bool IsActive { get; set; } = true;
+        public string CreatedBy { get; set; } = string.Empty;
+        public string? ModifiedBy { get; set; }
+        public string? DeletedBy { get; set; }
     }
 }

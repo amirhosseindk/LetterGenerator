@@ -1,9 +1,11 @@
 ﻿using LetterGenerator.Letter.Contracts;
+using LetterGenerator.Letter.Models;
 using LetterGenerator.Shared.Exceptions;
 using LetterGenerator.Shared.Maps;
 using LetterGenerator.Shared.Types;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LetterGenerator.Letter.Repositories
 {
@@ -105,6 +107,50 @@ namespace LetterGenerator.Letter.Repositories
             {
                 _logger.LogError(ex, "Error while deleting letter with id: {LetterId} in repository", id);
                 throw new BusinessException(ErrorMap.GetMessage(ErrorType.LetterRepoDeleteFailed), (int)ErrorType.LetterRepoDeleteFailed);
+            }
+        }
+
+        public async Task<int> CreateSyncStatusAsync(LetterSyncStatus status)
+        {
+            try
+            {
+                await _context.LetterSyncStatuses.AddAsync(status);
+                return await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while creating letterstatus in repository");
+                throw new BusinessException(ErrorMap.GetMessage(ErrorType.LetterStatusRepoCreationFailed), (int)ErrorType.LetterStatusRepoCreationFailed);
+            }
+        }
+
+        public async Task<bool> UpdateSyncStatusAsync(LetterSyncStatus status)
+        {
+            try
+            {
+                _context.LetterSyncStatuses.Update(status);
+                return await _context.SaveChangesAsync() > 0;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while updating letterstatus in repository");
+                throw new BusinessException(ErrorMap.GetMessage(ErrorType.LetterStatusRepoUpdateFailed), (int)ErrorType.LetterStatusRepoUpdateFailed);
+            }
+        }
+
+        public async Task<IEnumerable<LetterSyncStatus>> GetUnsyncedLettersAsync(string username, DeviceType device)
+        {
+            try
+            {
+                return await _context.LetterSyncStatuses.AsNoTracking()
+                    .Include(x => x.Letter)
+                    .Where(x => x.Username == username && x.DeviceType == device && !x.IsSynced)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while getting all letterstatuses in repository");
+                throw new BusinessException(ErrorMap.GetMessage(ErrorType.LetterStatusRepoGetAllFailed), (int)ErrorType.LetterStatusRepoGetAllFailed);
             }
         }
     }

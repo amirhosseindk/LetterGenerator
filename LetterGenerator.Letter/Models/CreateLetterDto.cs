@@ -1,4 +1,6 @@
-﻿namespace LetterGenerator.Letter.Models
+﻿using LetterGenerator.Shared.Types;
+
+namespace LetterGenerator.Letter.Models
 {
     public class CreateLetterDto
     {
@@ -12,5 +14,6 @@
         public bool HaveCopy { get; set; }
         public string Copy { get; set; }
         public string Username { get; set; }
+        public DeviceType DeviceType { get; set; }
     }
 }

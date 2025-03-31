@@ -1,5 +1,6 @@
 ﻿using LetterGenerator.Letter.Contracts;
 using LetterGenerator.Letter.Models;
+using LetterGenerator.Letter.Types;
 using LetterGenerator.Shared.Exceptions;
 using LetterGenerator.Shared.Maps;
 using LetterGenerator.Shared.Types;
@@ -10,11 +11,13 @@ namespace LetterGenerator.Letter.Services
     public class LetterService : ILetterService
     {
         private readonly ILetterRepository _repository;
+        private readonly ILetterSyncAdapter _adapter;
         private readonly ILogger<LetterService> _logger;
 
-        public LetterService(ILetterRepository repository, ILogger<LetterService> logger)
+        public LetterService(ILetterRepository repository, ILetterSyncAdapter adapter, ILogger<LetterService> logger)
         {
             _repository = repository;
+            _adapter = adapter;
             _logger = logger;
         }
 
@@ -60,7 +63,7 @@ namespace LetterGenerator.Letter.Services
             }
         }
 
-        public async Task<int> CreateAsync(CreateLetterDto dto)
+        public async Task<bool> CreateAsync(CreateLetterDto dto)
         {
             try
             {
@@ -78,7 +81,29 @@ namespace LetterGenerator.Letter.Services
                     CreatedBy = dto.Username
                 };
 
-                return await _repository.CreateAsync(letter);
+                var result = await _repository.CreateAsync(letter);
+
+                if (result > 0)
+                {
+                    var syncStatus = new LetterSyncStatus
+                    {
+                        LetterId = letter.Id,
+                        Username = dto.Username,
+                        DeviceType = dto.DeviceType,
+                        IsSynced = false,
+                        SyncType = Types.SyncType.Create,
+                        LastCheckedDateTimeUtc = DateTime.UtcNow
+                    };
+
+                    var retValue = await _repository.CreateSyncStatusAsync(syncStatus);
+
+                    if (retValue > 0)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
             catch (Exception ex)
             {
@@ -105,7 +130,28 @@ namespace LetterGenerator.Letter.Services
                 letter.ModifiedDateTimeUtc = DateTime.UtcNow;
                 letter.ModifiedBy = dto.Username;
 
-                return await _repository.UpdateAsync(letter);
+                var result = await _repository.UpdateAsync(letter);
+
+                if (result)
+                {
+                    var syncStatus = new LetterSyncStatus
+                    {
+                        LetterId = letter.Id,
+                        Username = dto.Username,
+                        DeviceType = dto.DeviceType,
+                        IsSynced = false,
+                        SyncType = Types.SyncType.Update,
+                        LastCheckedDateTimeUtc = DateTime.UtcNow
+                    };
+                    var retValue = await _repository.UpdateSyncStatusAsync(syncStatus);
+
+                    if (retValue)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
             catch (Exception ex)
             {
@@ -144,6 +190,34 @@ namespace LetterGenerator.Letter.Services
                 _logger.LogError(ex, "Error while deleting letter with id: {LetterId} in repository", id);
                 throw new BusinessException(ErrorMap.GetMessage(ErrorType.LetterServDeleteFailed), (int)ErrorType.LetterServDeleteFailed);
             }
+        }
+
+        public async Task<bool> SyncLettersAsync(string username, DeviceType deviceType)
+        {
+            var unyncedLetters = await _repository.GetUnsyncedLettersAsync(username, deviceType);
+
+            foreach (var status in unyncedLetters)
+            {
+                var letter = status.Letter;
+                switch (status.SyncType)
+                {
+                    case SyncType.Create:
+                        await _adapter.SendCreateAsync(letter);
+                        break;
+                    case SyncType.Update:
+                        await _adapter.SendUpdateAsync(letter);
+                        break;
+                    case SyncType.Delete:
+                        await _adapter.SendDeleteAsync(letter.Id);
+                        break;
+                }
+
+                status.IsSynced = true;
+                status.LastCheckedDateTimeUtc = DateTime.UtcNow;
+                await _repository.UpdateSyncStatusAsync(status);
+            }
+
+            return true;
         }
 
         private LetterDto MapToLetterDto(Models.Letter letter)

@@ -1,7 +1,7 @@
-﻿using LetterGenerator.User.Extensions;
-using LetterGenerator.Letter.Extensions;
-using Microsoft.Extensions.Configuration;
+﻿using LetterGenerator.Letter.Extensions;
 using Microsoft.Extensions.Logging;
+using LetterGenerator.Letter.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace LetterGenerator.MAUI;
 
@@ -11,12 +11,6 @@ public static class MauiProgram
     {
         var builder = MauiApp.CreateBuilder();
 
-        builder.Configuration.AddJsonFile("UsersProjectConfigs.json", optional: false, reloadOnChange: true)
-                             .AddJsonFile("UsersProjectConfigs.Development.json", optional: true, reloadOnChange: true);
-
-        builder.Configuration.AddJsonFile("LettersProjectConfigs.json", optional: false, reloadOnChange: true)
-                     .AddJsonFile("LettersProjectConfigs.Development.json", optional: true, reloadOnChange: true);
-
         builder
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
@@ -25,12 +19,17 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        builder.Services.ConfigureUserService(builder.Configuration);
-        builder.Services.ConfigureLetterService(builder.Configuration);
+        builder.Services.ConfigureLetterService(builder.Configuration, Path.Combine(FileSystem.AppDataDirectory, "LetterDb.db"));
 
         #if DEBUG
         builder.Logging.AddDebug();
         #endif
+
+        using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<LetterDbContext>();
+            db.Database.Migrate();
+        }
 
         return builder.Build();
     }

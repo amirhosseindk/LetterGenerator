@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using LetterGenerator.Letter.Adapters;
+﻿using LetterGenerator.Letter.Adapters;
 using LetterGenerator.Letter.Contracts;
 using LetterGenerator.Letter.Repositories;
 using LetterGenerator.Letter.Services;
@@ -11,15 +10,16 @@ namespace LetterGenerator.Letter.Extensions
 {
     public static class LetterExtension
     {
-        public static void ConfigureLetterService(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureLetterService(this IServiceCollection services, IConfiguration configuration, string dbPath)
         {
             services.AddDbContext<LetterDbContext>(options =>
-                options.UseSqlite(configuration.GetConnectionString("DefaultConnection")));
+            {
+                options.UseSqlite($"Filename={dbPath}");
+            });
 
             services.AddScoped<ILetterRepository, LetterRepository>();
 
-            var adapterBaseUrl = configuration.GetConnectionString("AdapterConnection")
-                                 ?? throw new InvalidOperationException("AdapterConnection string is not set.");
+            var adapterBaseUrl = configuration.GetConnectionString("AdapterConnection") ?? "https://localhost:5001";
 
             services.AddHttpClient<ILetterSyncAdapter, LetterSyncAdapter>(client =>
             {

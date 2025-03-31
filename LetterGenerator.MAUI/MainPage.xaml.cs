@@ -1,24 +1,37 @@
-﻿namespace LetterGenerator.MAUI;
+﻿using LetterGenerator.Letter.Contracts;
+using LetterGenerator.Letter.Models;
+
+namespace LetterGenerator.MAUI;
 
 public partial class MainPage : ContentPage
 {
-	int count = 0;
+    private readonly ILetterService _letterService;
 
-	public MainPage()
-	{
-		InitializeComponent();
-	}
+    public MainPage(ILetterService letterService)
+    {
+        InitializeComponent();
+        _letterService = letterService;
+    }
 
-	private void OnCounterClicked(object sender, EventArgs e)
-	{
-		count++;
+    private async void OnSaveLetterClicked(object sender, EventArgs e)
+    {
+        var dto = new CreateLetterDto
+        {
+            Number = DateNumberEntry.Text ?? "",
+            DateTimeLocal = DateTime.Now,
+            RecipientName = RecipientTitleEntry.Text ?? "",
+            RecipientPosition = RecipientPostionEntry.Text ?? "",
+            Body = BodyEditor.Text ?? "",
+            SenderName = SenderNameEntry.Text ?? "",
+            SenderPosition = SenderPostionEntry.Text ?? "",
+            HaveCopy = !string.IsNullOrWhiteSpace(CopyEntry.Text),
+            Copy = CopyEntry.Text ?? "",
+            Username = "TestUser",
+            DeviceType = Shared.Types.DeviceType.Android
+        };
 
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
+        var result = await _letterService.CreateAsync(dto);
 
-		SemanticScreenReader.Announce(CounterBtn.Text);
-	}
+        await DisplayAlert("نتیجه", result ? "نامه با موفقیت ذخیره شد!" : "خطا در ذخیره‌سازی نامه.", "باشه");
+    }
 }
-

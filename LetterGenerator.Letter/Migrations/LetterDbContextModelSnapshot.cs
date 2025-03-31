@@ -99,6 +99,9 @@ namespace LetterGenerator.Letter.Migrations
                     b.Property<DateTime>("LastCheckedDateTimeUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("SyncType")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("LetterId", "Username", "DeviceType");
 
                     b.ToTable("LetterSyncStatuses");

@@ -67,7 +67,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\LetterGenerator.Letter\LetterGenerator.Letter.csproj" />
 	  <ProjectReference Include="..\LetterGenerator.Shared\LetterGenerator.Shared.csproj" />
-	  <ProjectReference Include="..\LetterGenerator.User\LetterGenerator.User.csproj" />
 	</ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
 
 </Project>

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LetterGenerator.Letter.Migrations
 {
     [DbContext(typeof(LetterDbContext))]
-    [Migration("20250330212005_AddLetterSyncStatusTable")]
-    partial class AddLetterSyncStatusTable
+    [Migration("20250331132449_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,9 @@ namespace LetterGenerator.Letter.Migrations
 
                     b.Property<DateTime>("LastCheckedDateTimeUtc")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("SyncType")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("LetterId", "Username", "DeviceType");
 

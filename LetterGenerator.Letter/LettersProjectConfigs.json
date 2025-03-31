@@ -1,6 +1,0 @@
-﻿{
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=LetterDb.db",
-    "AdapterConnection": "https://your-api-base-url.com/"
-  }
-}

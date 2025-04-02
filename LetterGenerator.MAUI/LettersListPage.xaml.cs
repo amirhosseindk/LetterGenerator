@@ -16,18 +16,31 @@ public partial class LettersListPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        var letters = await _letterService.GetAllAsync();
-        LettersList.ItemsSource = letters;
+        await LoadLettersAsync();
     }
 
-    private async void OnLetterSelected(object sender, SelectionChangedEventArgs e)
+    private async Task LoadLettersAsync()
     {
-        if (e.CurrentSelection.FirstOrDefault() is LetterDto selectedLetter)
-        {
-            await Shell.Current.GoToAsync($"///EditLetter?number={selectedLetter.Number}");
-        }
+        var letters = await _letterService.GetAllAsync();
+        ButtonsContainer.Children.Clear();
 
-        LettersList.SelectedItem = null;
+        foreach (var letter in letters)
+        {
+            var button = new Button
+            {
+                Text = $"نامه شماره {letter.Number}",
+                FontSize = 18,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            button.Clicked += (sender, args) => OnLetterButtonClicked(letter.Number);
+            ButtonsContainer.Children.Add(button);
+        }
+    }
+
+    private async void OnLetterButtonClicked(string letterNumber)
+    {
+        await Shell.Current.GoToAsync($"///EditLetter?number={letterNumber}");
     }
 
     private async void OnBackClicked(object sender, EventArgs e)

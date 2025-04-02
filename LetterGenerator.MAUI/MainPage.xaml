@@ -1,22 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="LetterGenerator.MAUI.MainPage"
-             Title="تولید نامه">
+             Title="خانه">
 
-	<ScrollView>
-		<VerticalStackLayout Padding="20" Spacing="15">
-			<Entry x:Name="DateNumberEntry" Placeholder="شماره نامه" />
-			<Entry x:Name="DateEntry" Placeholder="تاریخ" />
-			<Entry x:Name="RecipientTitleEntry" Placeholder="نام گیرنده" />
-			<Entry x:Name="RecipientPostionEntry" Placeholder="مقام گیرنده" />
-			<Editor x:Name="BodyEditor" Placeholder="متن نامه" AutoSize="TextChanges" HeightRequest="150" />
-			<Entry x:Name="SenderNameEntry" Placeholder="نام ارسال کننده" />
-			<Entry x:Name="SenderPostionEntry" Placeholder="مقام ارسال کننده" />
-			<Entry x:Name="CopyEntry" Placeholder="رونوشت" />
+	<VerticalStackLayout Padding="30" Spacing="40" VerticalOptions="Center">
+		<Button Text="✍️ ثبت نامه جدید"
+                FontSize="24"
+                Clicked="OnCreateLetterClicked"
+                HeightRequest="80"/>
 
-			<Button Text="📄 ذخیره نامه" Clicked="OnSaveLetterClicked" />
-		</VerticalStackLayout>
-	</ScrollView>
+		<Button Text="📂 مشاهده نامه‌ها"
+                FontSize="24"
+                Clicked="OnViewLettersClicked"
+                HeightRequest="80"/>
+
+	</VerticalStackLayout>
 
 </ContentPage>

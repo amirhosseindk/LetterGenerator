@@ -1,0 +1,21 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="LetterGenerator.MAUI.EditLetterPage"
+             Title="ویرایش نامه"
+             FlowDirection="RightToLeft">
+
+	<ScrollView>
+		<VerticalStackLayout Padding="20" Spacing="15">
+			<Entry x:Name="DateNumberEntry" Placeholder="شماره نامه" />
+			<Editor x:Name="BodyEditor" Placeholder="متن نامه" AutoSize="TextChanges" HeightRequest="150" />
+			<Entry x:Name="RecipientTitleEntry" Placeholder="نام گیرنده" />
+			<Entry x:Name="RecipientPostionEntry" Placeholder="مقام گیرنده" />
+			<Entry x:Name="SenderNameEntry" Placeholder="نام ارسال کننده" />
+			<Entry x:Name="SenderPostionEntry" Placeholder="مقام ارسال کننده" />
+			<Entry x:Name="CopyEntry" Placeholder="رونوشت" />
+
+			<Button Text="💾 ذخیره تغییرات" Clicked="OnSaveChangesClicked" />
+			<Button Text="🔙 بازگشت" Clicked="OnBackClicked" />
+		</VerticalStackLayout>
+	</ScrollView>
+</ContentPage>

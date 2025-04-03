@@ -1,5 +1,7 @@
 ﻿using LetterGenerator.Letter.Contracts;
 using LetterGenerator.Letter.Models;
+using LetterGenerator.Exporting.Contracts;
+using LetterGenerator.Exporting.Models;
 
 namespace LetterGenerator.MAUI;
 
@@ -7,14 +9,16 @@ namespace LetterGenerator.MAUI;
 public partial class EditLetterPage : ContentPage
 {
     private readonly ILetterService _letterService;
+    private readonly IDocumentGenerationService _docService;
     private LetterDto _letter;
 
     public string LetterNumber { get; set; }
 
-    public EditLetterPage(ILetterService letterService)
+    public EditLetterPage(ILetterService letterService, IDocumentGenerationService docService)
     {
         InitializeComponent();
         _letterService = letterService;
+        _docService = docService;
     }
 
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -60,6 +64,50 @@ public partial class EditLetterPage : ContentPage
 
         var result = await _letterService.UpdateAsync(dto);
         await DisplayAlert("نتیجه", result ? "تغییرات ذخیره شد!" : "خطا در ذخیره‌سازی", "باشه");
+    }
+
+    private async void OnExportWordClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var dto = MapToExportDto(_letter);
+            var path = await _docService.GenerateWordAsync(dto);
+            await Launcher.Default.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(path) });
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("خطا", ex.Message, "باشه");
+        }
+    }
+
+    private async void OnExportPdfClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var dto = MapToExportDto(_letter);
+            var path = await _docService.GeneratePdfAsync(dto);
+            await Launcher.Default.OpenAsync(new OpenFileRequest { File = new ReadOnlyFile(path) });
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("خطا", ex.Message, "باشه");
+        }
+    }
+
+    private static ExportLetterDto MapToExportDto(LetterDto letter)
+    {
+        return new ExportLetterDto
+        {
+            Number = letter.Number,
+            DateTimeLocal = letter.DateTimeLocal,
+            RecipientName = letter.RecipientName,
+            RecipientPosition = letter.RecipientPosition,
+            Body = letter.Body,
+            SenderName = letter.SenderName,
+            SenderPosition = letter.SenderPosition,
+            HaveCopy = letter.HaveCopy,
+            Copy = letter.Copy
+        };
     }
 
     private async void OnBackClicked(object sender, EventArgs e)

@@ -60,13 +60,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Templates\LetterTemplateWithPlaceholders.docx" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\LetterGenerator.Exporting\LetterGenerator.Exporting.csproj" />
 	  <ProjectReference Include="..\LetterGenerator.Letter\LetterGenerator.Letter.csproj" />
 	  <ProjectReference Include="..\LetterGenerator.Shared\LetterGenerator.Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiAsset Update="Resources\Raw\LetterTemplateWithPlaceholders.docx">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </MauiAsset>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -79,6 +90,10 @@
 	  <MauiXaml Update="LettersListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\Templates\" />
 	</ItemGroup>
 
   <PropertyGroup>

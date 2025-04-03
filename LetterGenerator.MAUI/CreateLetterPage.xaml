@@ -15,6 +15,8 @@
 			<Entry x:Name="CopyEntry" Placeholder="رونوشت" />
 
 			<Button Text="📄 ذخیره نامه" Clicked="OnSaveLetterClicked" />
+			<Button Text="📄 خروجی Word" Clicked="OnExportWordClicked" />
+			<Button Text="📑 خروجی PDF" Clicked="OnExportPdfClicked" />
 			<Button Text="🔙 بازگشت" Clicked="OnBackClicked" />
 		</VerticalStackLayout>
 	</ScrollView>

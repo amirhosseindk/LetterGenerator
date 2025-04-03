@@ -1,6 +1,7 @@
 ﻿using LetterGenerator.Letter.Extensions;
 using Microsoft.Extensions.Logging;
 using LetterGenerator.Letter.Contracts;
+using LetterGenerator.Exporting.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace LetterGenerator.MAUI;
@@ -20,6 +21,8 @@ public static class MauiProgram
             });
 
         builder.Services.ConfigureLetterService(builder.Configuration, Path.Combine(FileSystem.AppDataDirectory, "LetterDb.db"));
+        builder.Services.ConfigureExportingServices(FileSystem.AppDataDirectory);
+
 
         #if DEBUG
         builder.Logging.AddDebug();

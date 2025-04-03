@@ -11,4 +11,9 @@ public partial class App : Application
 	{
 		return new Window(new AppShell());
 	}
+
+    protected override async void OnStart()
+    {
+        await TemplateInitializer.EnsureTemplateCopiedAsync();
+    }
 }

@@ -1,17 +1,32 @@
-﻿namespace LetterGenerator.MAUI
+﻿namespace LetterGenerator.MAUI;
+
+public static class TemplateInitializer
 {
-    public static class TemplateInitializer
+    private static readonly string[] FilesToCopy = new[]
     {
-        public static async Task EnsureTemplateCopiedAsync()
+        "LetterTemplateWithPlaceholders.docx",
+        "pdftemplate.jpg",
+        "B-Nazanin.ttf"
+    };
+
+    public static async Task EnsureTemplateCopiedAsync()
+    {
+        foreach (var fileName in FilesToCopy)
         {
-            string fileName = "LetterTemplateWithPlaceholders.docx";
             string destPath = Path.Combine(FileSystem.AppDataDirectory, fileName);
 
             if (!File.Exists(destPath))
             {
-                using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
-                using var output = File.Create(destPath);
-                await stream.CopyToAsync(output);
+                try
+                {
+                    using var stream = await FileSystem.OpenAppPackageFileAsync(fileName);
+                    using var output = File.Create(destPath);
+                    await stream.CopyToAsync(output);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error copying {fileName}: {ex.Message}");
+                }
             }
         }
     }

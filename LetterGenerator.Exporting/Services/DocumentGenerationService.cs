@@ -1,11 +1,9 @@
-﻿using LetterGenerator.Exporting.Contracts;
+﻿using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Syncfusion.Pdf;
+using Syncfusion.DocIORenderer;
+using LetterGenerator.Exporting.Contracts;
 using LetterGenerator.Exporting.Models;
-using QuestPDF.Drawing;
-using QuestPDF.Fluent;
-using QuestPDF.Infrastructure;
-using System.Text.RegularExpressions;
-using Xceed.Document.NET;
-using Xceed.Words.NET;
 
 namespace LetterGenerator.Exporting.Services
 {
@@ -16,75 +14,49 @@ namespace LetterGenerator.Exporting.Services
         public DocumentGenerationService(string templateDirectory)
         {
             _templateDirectory = templateDirectory;
-            QuestPDF.Settings.License = LicenseType.Community;
         }
 
-        public Task<string> GenerateWordAsync(ExportLetterDto letter)
+        public async Task<string> GenerateWordAsync(ExportLetterDto letter)
         {
-            return Task.Run(() =>
-            {
-                var templatePath = Path.Combine(_templateDirectory, "LetterTemplateWithPlaceholders.docx");
-                var outputPath = Path.Combine(_templateDirectory, $"Letter_{letter.Number}.docx");
+            string templatePath = Path.Combine(_templateDirectory, "LetterTemplateWithPlaceholders.docx");
+            string outputPath = Path.Combine(_templateDirectory, $"Letter_{letter.Number}.docx");
 
-                if (!File.Exists(templatePath))
-                    throw new FileNotFoundException("Template file not found.", templatePath);
+            using FileStream inputStream = new(templatePath, FileMode.Open, FileAccess.Read);
+            WordDocument document = new(inputStream, FormatType.Docx);
 
-                using var doc = DocX.Load(templatePath);
+            document.Replace("{{Date}}", letter.DateTimeLocal.ToString("yyyy/MM/dd"), false, true);
+            document.Replace("{{Number}}", letter.Number, false, true);
+            document.Replace("{{RecipientTitleEntry}}", letter.RecipientName, false, true);
+            document.Replace("{{RecipientPostionEntry}}", letter.RecipientPosition, false, true);
+            document.Replace("{{Body}}", letter.Body, false, true);
+            document.Replace("{{SenderNameEntry}}", letter.SenderName, false, true);
+            document.Replace("{{SenderPostionEntry}}", letter.SenderPosition, false, true);
+            document.Replace("{{Copy}}", letter.HaveCopy ? "رونوشت:\n" + letter.Copy : "", false, true);
 
-                Replace(doc, "{{Date}}", letter.DateTimeLocal.ToString("yyyy/MM/dd"));
-                Replace(doc, "{{Number}}", letter.Number);
-                Replace(doc, "{{RecipientTitleEntry}}", letter.RecipientName);
-                Replace(doc, "{{RecipientPostionEntry}}", letter.RecipientPosition);
-                Replace(doc, "{{Body}}", letter.Body);
-                Replace(doc, "{{SenderNameEntry}}", letter.SenderName);
-                Replace(doc, "{{SenderPostionEntry}}", letter.SenderPosition);
+            using FileStream outputStream = new(outputPath, FileMode.Create, FileAccess.Write);
+            document.Save(outputStream, FormatType.Docx);
+            document.Close();
 
-                if (letter.HaveCopy)
-                    Replace(doc, "{{Copy}}", string.IsNullOrWhiteSpace(letter.Copy) ? "" : "رو نوشت:\n" + letter.Copy);
-
-                foreach (var p in doc.Paragraphs)
-                    p.Font("B Nazanin");
-
-                doc.SaveAs(outputPath);
-                return outputPath;
-            });
+            return outputPath;
         }
 
-        public Task<string> GeneratePdfAsync(ExportLetterDto letter)
+        public async Task<string> GeneratePdfAsync(ExportLetterDto letter)
         {
-            return Task.Run(() =>
-            {
-                var outputPath = Path.Combine(_templateDirectory, $"Letter_{letter.Number}.pdf");
+            var wordPath = await GenerateWordAsync(letter);
+            var pdfPath = Path.Combine(_templateDirectory, $"Letter_{letter.Number}.pdf");
 
-                var fontPath = Path.Combine(_templateDirectory, "B-Nazanin.ttf");
-                var imagePath = Path.Combine(_templateDirectory, "PdfTemplate.jpg");
+            using FileStream wordStream = new(wordPath, FileMode.Open, FileAccess.Read);
+            using WordDocument document = new(wordStream, FormatType.Docx);
 
-                if (!File.Exists(fontPath))
-                    throw new FileNotFoundException("Persian font file not found.", fontPath);
+            using DocIORenderer renderer = new DocIORenderer();
+            renderer.Settings.AutoTag = true;
+            renderer.Settings.PreserveFormFields = true;
 
-                if (!File.Exists(imagePath))
-                    throw new FileNotFoundException("Header image not found.", imagePath);
+            using PdfDocument pdfDocument = renderer.ConvertToPDF(document);
+            using FileStream pdfStream = new(pdfPath, FileMode.Create, FileAccess.Write);
+            pdfDocument.Save(pdfStream);
 
-                FontManager.RegisterFont(File.OpenRead(fontPath));
-
-                var document = new LetterPdfDocument(letter, "B-Nazanin", imagePath);
-                document.GeneratePdf(outputPath);
-
-                return outputPath;
-            });
-        }
-
-        private void Replace(DocX doc, string find, string replace)
-        {
-            var options = new StringReplaceTextOptions
-            {
-                NewValue = replace,
-                SearchValue = find,
-                RegExOptions = RegexOptions.None,
-                TrackChanges = false
-            };
-
-            doc.ReplaceText(options);
+            return pdfPath;
         }
     }
 }

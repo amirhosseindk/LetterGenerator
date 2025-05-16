@@ -7,9 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocX" Version="4.0.25105.5786" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
-    <PackageReference Include="QuestPDF" Version="2025.1.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Syncfusion.Compression.NET">
+      <HintPath>D:\Syncfusion.Compression.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIO.NET">
+      <HintPath>D:\Syncfusion.DocIO.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.DocIORenderer.NET">
+      <HintPath>D:\Syncfusion.DocIORenderer.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.OfficeChart.NET">
+      <HintPath>D:\Syncfusion.OfficeChart.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.NET">
+      <HintPath>D:\Syncfusion.Pdf.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.SkiaSharpHelper.NET">
+      <HintPath>D:\Syncfusion.SkiaSharpHelper.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

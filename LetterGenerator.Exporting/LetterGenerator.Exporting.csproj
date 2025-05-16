@@ -8,26 +8,30 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.3" />
+    <PackageReference Include="SkiaSharp" Version="3.119.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Syncfusion.Compression.NET">
-      <HintPath>D:\Syncfusion.Compression.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.Compression.NET.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.DocIO.NET">
-      <HintPath>D:\Syncfusion.DocIO.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.DocIO.NET.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.DocIORenderer.NET">
-      <HintPath>D:\Syncfusion.DocIORenderer.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.DocIORenderer.NET.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.OfficeChart.NET">
-      <HintPath>D:\Syncfusion.OfficeChart.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.OfficeChart.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Pdf.Imaging.NET">
+      <HintPath>..\..\..\..\Documents\Syncfusion.Pdf.Imaging.NET.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.Pdf.NET">
-      <HintPath>D:\Syncfusion.Pdf.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.Pdf.NET.dll</HintPath>
     </Reference>
     <Reference Include="Syncfusion.SkiaSharpHelper.NET">
-      <HintPath>D:\Syncfusion.SkiaSharpHelper.NET.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Syncfusion.SkiaSharpHelper.NET.dll</HintPath>
     </Reference>
   </ItemGroup>
 

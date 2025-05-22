@@ -1,0 +1,36 @@
+﻿@page "/letters"
+@inject ILetterService LetterService
+@inject NavigationManager Navigation
+
+<h3>نامه‌ها</h3>
+
+@if (letters is null)
+{
+    <p>در حال بارگذاری...</p>
+}
+else
+{
+    <div class="list-group">
+        @foreach (var letter in letters)
+        {
+            <button class="list-group-item list-group-item-action"
+                    @onclick="@(() => GoToEdit(letter.Number))">
+                📄 نامه شماره @letter.Number
+            </button>
+        }
+    </div>
+}
+
+<button class="btn btn-secondary mt-3" @onclick="Back">🔙 بازگشت</button>
+
+@code {
+    List<LetterDto> letters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        letters = await LetterService.GetAllAsync();
+    }
+
+    void GoToEdit(string number) => Navigation.NavigateTo($"/edit/{number}");
+    void Back() => Navigation.NavigateTo("/");
+}

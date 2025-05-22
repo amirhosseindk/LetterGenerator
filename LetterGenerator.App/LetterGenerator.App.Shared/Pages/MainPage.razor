@@ -1,0 +1,14 @@
+﻿@page "/"
+@inject NavigationManager Navigation
+
+<h1 class="text-center my-4">خانه</h1>
+
+<div class="d-flex flex-column align-items-center gap-4" style="padding: 30px">
+    <button class="btn btn-primary btn-lg" style="height: 80px" @onclick="GoToCreateLetter">✍️ ثبت نامه جدید</button>
+    <button class="btn btn-secondary btn-lg" style="height: 80px" @onclick="GoToLetterList">📂 مشاهده نامه‌ها</button>
+</div>
+
+@code {
+    private void GoToCreateLetter() => Navigation.NavigateTo("/create");
+    private void GoToLetterList() => Navigation.NavigateTo("/letters");
+}

@@ -1,0 +1,71 @@
+﻿@page "/create"
+@inject ILetterService LetterService
+@inject IDocumentGenerationService DocumentService
+
+<h3>ثبت نامه جدید</h3>
+
+<div class="form-group">
+    <input @bind="Number" placeholder="شماره نامه" class="form-control" />
+    <input @bind="Date" placeholder="تاریخ" class="form-control" />
+    <input @bind="RecipientName" placeholder="نام گیرنده" class="form-control" />
+    <input @bind="RecipientPosition" placeholder="مقام گیرنده" class="form-control" />
+    <textarea @bind="Body" placeholder="متن نامه" class="form-control" rows="6"></textarea>
+    <input @bind="SenderName" placeholder="نام ارسال کننده" class="form-control" />
+    <input @bind="SenderPosition" placeholder="مقام ارسال کننده" class="form-control" />
+    <input @bind="Copy" placeholder="رونوشت" class="form-control" />
+</div>
+
+<div class="mt-3">
+    <button class="btn btn-success" @onclick="SaveLetter">📄 ذخیره نامه</button>
+    <button class="btn btn-primary" @onclick="ExportWord">📄 خروجی Word</button>
+    <button class="btn btn-warning" @onclick="ExportPdf">📑 خروجی PDF</button>
+</div>
+
+@code {
+    string Number, Date, RecipientName, RecipientPosition, Body, SenderName, SenderPosition, Copy;
+
+    async Task SaveLetter()
+    {
+        var dto = new CreateLetterDto
+            {
+                Number = Number,
+                DateTimeLocal = DateTime.Now,
+                RecipientName = RecipientName,
+                RecipientPosition = RecipientPosition,
+                Body = Body,
+                SenderName = SenderName,
+                SenderPosition = SenderPosition,
+                HaveCopy = !string.IsNullOrWhiteSpace(Copy),
+                Copy = Copy,
+                Username = "TestUser",
+                DeviceType = Shared.Types.DeviceType.Web
+            };
+
+        var result = await LetterService.CreateAsync(dto);
+    }
+
+    async Task ExportWord()
+    {
+        var dto = GetDto();
+        var path = await DocumentService.GenerateWordAsync(dto);
+    }
+
+    async Task ExportPdf()
+    {
+        var dto = GetDto();
+        var path = await DocumentService.GeneratePdfAsync(dto);
+    }
+
+    ExportLetterDto GetDto() => new()
+        {
+            Number = Number,
+            DateTimeLocal = DateTime.Now,
+            RecipientName = RecipientName,
+            RecipientPosition = RecipientPosition,
+            Body = Body,
+            SenderName = SenderName,
+            SenderPosition = SenderPosition,
+            HaveCopy = !string.IsNullOrWhiteSpace(Copy),
+            Copy = Copy
+        };
+}

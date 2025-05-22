@@ -1,0 +1,16 @@
+﻿<Router AppAssembly="typeof(Layout.MainLayout).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <p>صفحه‌ای یافت نشد.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+<page path="/" />
+<page path="/create" />
+<page path="/letters" />
+<page path="/edit/{LetterNumber}" />
